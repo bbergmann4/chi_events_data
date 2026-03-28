@@ -43,6 +43,9 @@ Before getting started, you will need to have your own google cloud platform acc
 
 You will also be required to sign up for a free API account with the City of Chicago (described below)
 
+PREFERRED:  If you are running in Github Codespaces, necessary tools are installed via .devcontainer
+
+If you are using a VM or local machine, run `bash setup.sh` 
 
 
 ## Credentials
