@@ -1,4 +1,4 @@
-variable "credentials" {
+variable "CREDENTIALS" {
   description = "Google Cloud Service Account Credentials:  Resource Admin"
   default     = "<Path to your Service Account json file>"
   #This will be overidden if you created TF_VAR_credentials.  If you'd rather use a local file 

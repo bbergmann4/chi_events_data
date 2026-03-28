@@ -11,10 +11,10 @@ This workflow aims to build a pipeline from the City of Chicago’s data portal 
 - Explore the Chicago Data Portal
 ## Tools & Approach
 In order to accomplish these goals, I plan to use the following tools:
-- Use uv for virtual environment management
+- Github codespaces as a replicable virtual environment 
+- Provision infrastructure as code using Terraform
 - Orchestrate ETL and testing with Bruin
 - Utilize GCP buckets, BigQuery, and Google Looker for storage, analysis, and reporting
-- Provision infrastructure as code using Terraform
 - The workflow was  built in Github Codespaces, using codespace secrets for a clean environment and replicability
 
 # The Data
@@ -91,9 +91,13 @@ Resource Admin Account
   - Secret:  _The contents of your resource admin service account json_
 
 **Your Chicago Data Portal credenials**
- - Name:  CHI_API
- - Secret:  _The secret token provided by data.cityofchicago.org_
 
+  - Name:  CHI_API_ID
+  - Secret:  _The API Key ID provided by data.cityofchicago.org_
+
+  
+  - Name:  CHI_API_SECRET
+  - Secret:  _The API Key Secret provided by data.cityofchicago.org_
 
 ## Terraform
 
@@ -135,10 +139,13 @@ When you are done with these resources, you can pull them down with
 terraform destroy
 ```
 
-Be aware that your tfstate file is in the gitignore and will not be included when you push to repo.  
+Be aware that your tfstate file is in the gitignore and will not be included when you push to repo.  When you are done `cd ..`
 
 
 ## Bruin
+
+Bruin CLI install is part of the devcontainer.json as well as the setup.sh process.  You may want to add the Bruin vscode extension.
+
 
 ## Tests
 

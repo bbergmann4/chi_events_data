@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = file(var.credentials)
+  credentials = var.CREDENTIALS
   project     = var.project
   region      = var.region
 }
@@ -35,4 +35,5 @@ resource "google_storage_bucket" "chi-events-bucket" {
 resource "google_bigquery_dataset" "chi_events_dataset" {
   dataset_id = var.bq_dataset_name
   location   = var.location
+  delete_contents_on_destroy = true
 }
