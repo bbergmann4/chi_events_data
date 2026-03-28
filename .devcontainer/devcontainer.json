@@ -1,7 +1,7 @@
 {
 	"image": "mcr.microsoft.com/devcontainers/universal:2",
 	"features": {
-		"ghcr.io/devcontainers-extra/features/terraform-asdf:2": {},
-		"./features/bruin": {}
-	}
+		"ghcr.io/devcontainers-extra/features/terraform-asdf:2": {}
+	},
+	"postCreateCommand": "curl -LsSf https://getbruin.com/install/cli | sh"
 }
