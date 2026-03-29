@@ -1,1 +1,0 @@
-curl -LsSf https://getbruin.com/install/cli | sh
