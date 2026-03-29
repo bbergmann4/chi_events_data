@@ -21,7 +21,7 @@ In order to accomplish these goals, I plan to use the following tools:
 
 ## Chicago Data Portal
 
-The City of Chicago maintains a large library of public datasets in a variety of formats.  Many of these are accessible through their API.  
+The City of Chicago maintains a large library of public datasets in a variety of formats.  Many of these are accessible through their SODA3 API.  
 
 [Library Events Metadata](https://data.cityofchicago.org/Events/Chicago-Public-Library-Events/vsdy-d8k7/about_data)
 
@@ -35,18 +35,13 @@ The City of Chicago maintains a large library of public datasets in a variety of
 ## Data Formats
 
 
-# Setup Instructions
+# Project Evaluation
 
-Feel free to create a fork of this repository or use github importer to make a disconnected copy in your github.
+Feel free to create a fork of this repository or use github importer to make a disconnected copy in your github.  I've built this so that you can easily replicate this workflow the Github Codespaces. If you follow this path, all of the tools needed will be installed using the .devcontainer.json file and you will provide all credentials needed through codespace secrets.  
 
-Before getting started, you will need to have your own google cloud platform account. 
+It is possible to run this process "in production" on a standalone virtual machine with minimal changes.  Instead of storing secrets in github, you would store them as environment variables.  Tools can be installed with the setup.sh file provided (run run `bash setup.sh` ).   
 
-You will also be required to sign up for a free API account with the City of Chicago (described below)
-
-PREFERRED:  If you are running in Github Codespaces, necessary tools are installed via .devcontainer
-
-If you are using a VM or local machine, run `bash setup.sh` 
-
+Before getting started, you will need to have your own google cloud platform account. The files are of trivial size and it is not a highly computational process, so any expense should be minimal.  You will also be required to provide information to sign up for a free API account with the City of Chicago (described below)
 
 ## Credentials
 
@@ -76,9 +71,11 @@ In order to call the API, you will need to have an api key. You can do this by v
 4.  Now you should see a button to create a new API key.  Copy the secret in a safe place for now so that you can save it in to github secrets.
 
 ### Storing Credentials
+
+In order to safely store secrets in this project, I am using codespace secrets that act as environment variables within the VM.
 1.  Login to github in your browswer, open your copy of this repo, and go to settings
 2.  Under  Security there is "Secrets and variables" header.  Click on Codespaces.
-3.  Create two new codespace secrets in this repo:
+3.  Create the following 5 codespace secrets in this repo:
 
  **Your GCP credentials**
 
@@ -89,6 +86,10 @@ In order to call the API, you will need to have an api key. You can do this by v
 Resource Admin Account
   - Name TF_VAR_credentials
   - Secret:  _The contents of your resource admin service account json_
+
+Project ID
+  - Name:  TF_VAR_PROJECTID
+  - Secret:  _The project id associated with the above service accounts (looks like random-word-1234-a2)_
 
 **Your Chicago Data Portal credenials**
 
@@ -105,17 +106,16 @@ This process will create a google cloud storage bucket and a BigQuery dataset fo
 
 ### Setup
 
-Terraform will allow you to provision the GCP resources you need for this project.  However, you will need to update the variables.tf file to reflect your own configuration.
+Terraform will allow you to provision the GCP resources you need for this project.  However, you may need to update the variables.tf file to reflect your own configuration.
 
- - Update the project_id to reflect your project in GCP
  - Create a unique name for your storage bucket
- - Update the region and location if they do not reflect your GCP setup
+ - Update the region (default=us-central1) and location (us) if they do not reflect your GCP setup
  - If you aren't using codespace secrets, you can provide path to credentials
 
  Alternatively, you can overide my default values with the following syntax:
 ```
-terraform plan -var="project=<your-gcp-project-id>" -var="gcs_bucket_name=<a-unique-bucket>
-terraform apply -var="project=<your-gcp-project-id>" -var="gcs_bucket_name=<a-unique-bucket>
+terraform plan -var="gcs_bucket_name=<a-unique-bucket>"
+terraform apply  -var="gcs_bucket_name=<a-unique-bucket>"
 ```
 
 ### Execution
@@ -134,17 +134,12 @@ Then, execute the build and create the resources
 ```
 terraform apply
 ```
-When you are done with these resources, you can pull them down with
-```
-terraform destroy
-```
-
-Be aware that your tfstate file is in the gitignore and will not be included when you push to repo.  When you are done `cd ..`
+When you are done with these resources, you can pull them down with `terraform destroy`.  This will delete all data in your dataset. Be aware that your tfstate files are in the gitignore and will not be included when you push to repo.  When you are done, return to the root directory.
 
 
-## Bruin
+## Bruin Chi-Data Pipeline
 
-Bruin CLI install is part of the devcontainer.json as well as the setup.sh process.  You may want to add the Bruin vscode extension.
+Bruin CLI install is part of the devcontainer.json as well as the setup.sh process.  You may want to add the Bruin vscode extension for visibility.  A .bruin.yml file is included and is populated with the github secrets.  
 
 
 ## Tests

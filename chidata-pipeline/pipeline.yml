@@ -1,0 +1,13 @@
+name: chidata-pipeline
+schedule: daily
+start_date: "2026-03-20"
+catchup: false
+
+default_connections:
+    google_cloud_platform: GCP_ETL
+variables:
+#update with your own bucket name or pass a var when calling the pipeline
+    gcs_bucket_name:
+        type: string
+        default: "chi-events-0328"
+        

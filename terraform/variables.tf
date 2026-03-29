@@ -8,10 +8,10 @@ variable "CREDENTIALS" {
 }
 
 
-variable "project" {
+variable "PROJECTID" {
   description = "Project"
   default     = "your-projectid-01234"
-  #You will need to update to reflect the project you set up in GCP
+  #Will use the codespace secret or you can update here reflect the GCP project id for your credentials
 }
 
 variable "region" {
