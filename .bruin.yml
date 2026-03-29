@@ -4,9 +4,9 @@ environments:
     default:
         connections:
             google_cloud_platform: 
-                name: GCP_ETL
+                - name: GCP_ETL
+                  type: google_cloud
                 #update the following with your GCP project ID or use a codespace secret
-                project_id: ${GCP_PROJECT_ID}
+                  project_id: ${GCP_PROJECT_ID}
                 #If you update the following with your GCP service account JSON, make sure to add this file to your gitignore
-                service_account_json: ${GCP_ETL_CRED}
-
+                  service_account_json: "${GCP_ETL_CRED}"

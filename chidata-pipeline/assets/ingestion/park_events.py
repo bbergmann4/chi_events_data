@@ -1,14 +1,14 @@
 """@bruin
 
-name: ingestion.park_locations
+name: ingestion.park_events
 type: python
 image: python:3.11
 connection: GCP_ETL
 
 materialization:
   type: table
-  strategy: upsert
-  unique_key: [requestor_, organization, park_number, reservation_start_date, reservation_end
+  strategy: merge
+  unique_key: [requestor_, organization, park_number, reservation_start_date, reservation_end]
 
 columns:
   - name: requestor_
@@ -41,8 +41,6 @@ columns:
   - name: extracted_at
     type: timestamp
     description: The timestamp when the data was extracted from the source system for lineage purposes
-    
- 
 @bruin"""
 
 
@@ -64,7 +62,7 @@ def materialize():
     """
 
     basic = HTTPBasicAuth(os.getenv('CHI_API_ID'), os.getenv('CHI_API_SECRET'))
-    url = https://data.cityofchicago.org/api/v3/views/pk66-w54g/query.csv
+    url = "https://data.cityofchicago.org/api/v3/views/pk66-w54g/query.csv"
     limit = 500  # Max records per request
     safety_offset_limit = 100000  # Safety limit to prevent infinite loops
     offset = 0

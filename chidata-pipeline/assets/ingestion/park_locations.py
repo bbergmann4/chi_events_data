@@ -7,7 +7,7 @@ connection: GCP_ETL
 
 materialization:
   type: table
-  strategy: replace
+  strategy: create+replace
 
 
 columns:
@@ -28,7 +28,7 @@ columns:
     description: The name of the park facility
   - name: facility_t
     type: string
-    description: The type of park facility:  INDOOR, OUTDOOR, or SPECIAL
+    description: The type of park facility INDOOR, OUTDOOR, or SPECIAL
   - name: x_coord
     type: float
     description: The x coordinate of the park facility location
@@ -63,7 +63,7 @@ def materialize():
     """
 
     basic = HTTPBasicAuth(os.getenv('CHI_API_ID'), os.getenv('CHI_API_SECRET'))
-    url = https://data.cityofchicago.org/api/v3/views/eix4-gf83/query.csv
+    url = "https://data.cityofchicago.org/api/v3/views/eix4-gf83/query.csv"
     limit = 500  # Max records per request
     safety_offset_limit = 100000  # Safety limit to prevent infinite loops
     offset = 0

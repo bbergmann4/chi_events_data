@@ -84,7 +84,7 @@ In order to safely store secrets in this project, I am using codespace secrets t
   - Secret:  _The contents of your ETL service account json_
 
 Resource Admin Account
-  - Name TF_VAR_credentials
+  - Name TF_VAR_CREDENTIALS
   - Secret:  _The contents of your resource admin service account json_
 
 Project ID
