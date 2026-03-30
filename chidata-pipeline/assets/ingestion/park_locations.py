@@ -9,7 +9,6 @@ materialization:
   type: table
   strategy: create+replace
 
-
 columns:
   - name: the_geom
     type: string
@@ -51,6 +50,7 @@ import pandas as pd
 import requests
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from requests.auth import HTTPBasicAuth
 
 
 def materialize():
@@ -68,15 +68,15 @@ def materialize():
     safety_offset_limit = 100000  # Safety limit to prevent infinite loops
     offset = 0
     df = pd.DataFrame({
-        the_geom: pd.Series(dtype='string'),
-        objectid_1: pd.Series(dtype='string'),
-        park: pd.Series(dtype='string'),
-        park_number: pd.Series(dtype='int'),
-        facility_n: pd.Series(dtype='string'),
-        facility_t: pd.Series(dtype='string'),
-        x_coord: pd.Series(dtype='float'),
-        y_coord: pd.Series(dtype='float'),
-        gisobjid: pd.Series(dtype='int')
+        'the_geom': pd.Series(dtype='string'),
+        'objectid_1': pd.Series(dtype='string'),
+        'park': pd.Series(dtype='string'),
+        'park_number': pd.Series(dtype='int'),
+        'facility_n': pd.Series(dtype='string'),
+        'facility_t': pd.Series(dtype='string'),
+        'x_coord': pd.Series(dtype='float'),
+        'y_coord': pd.Series(dtype='float'),
+        'gisobjid': pd.Series(dtype='int')
     })
       
     while True:

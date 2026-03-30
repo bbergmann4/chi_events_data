@@ -49,7 +49,7 @@ import json
 import pandas as pd
 import requests
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
+from requests.auth import HTTPBasicAuth
 
 
 def materialize():
@@ -67,15 +67,15 @@ def materialize():
     safety_offset_limit = 100000  # Safety limit to prevent infinite loops
     offset = 0
     df = pd.DataFrame({
-        requestor_: pd.Series(dtype='string'),
-        organization: pd.Series(dtype='string'),
-        park_number: pd.Series(dtype='int'),
-        park_facility_name: pd.Series(dtype='string'),
-        reservation_start_date: pd.Series(dtype='datetime64[ns]'),
-        reservation_end_date: pd.Series(dtype='datetime64[ns]'),
-        event_type: pd.Series(dtype='string'),
-        event_description: pd.Series(dtype='string'),
-        permit_status: pd.Series(dtype='string')
+        'requestor_': pd.Series(dtype='string'),
+        'organization': pd.Series(dtype='string'),
+        'park_number': pd.Series(dtype='int'),
+        'park_facility_name': pd.Series(dtype='string'),
+        'reservation_start_date': pd.Series(dtype='datetime64[ns]'),
+        'reservation_end_date': pd.Series(dtype='datetime64[ns]'),
+        'event_type': pd.Series(dtype='string'),
+        'event_description': pd.Series(dtype='string'),
+        'permit_status': pd.Series(dtype='string')
     })
     while True:
         file = requests.post(url, auth=basic, data={'$limit': limit, '$offset': offset})
