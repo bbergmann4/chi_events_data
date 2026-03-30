@@ -51,7 +51,7 @@ import requests
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from requests.auth import HTTPBasicAuth
-
+from io import BytesIO
 
 def materialize():
     """
@@ -63,10 +63,7 @@ def materialize():
     """
 
     basic = HTTPBasicAuth(os.getenv('CHI_API_ID'), os.getenv('CHI_API_SECRET'))
-    url = "https://data.cityofchicago.org/api/v3/views/eix4-gf83/query.csv"
-    limit = 500  # Max records per request
-    safety_offset_limit = 100000  # Safety limit to prevent infinite loops
-    offset = 0
+    url = "https://data.cityofchicago.org/api/v3/views/eix4-gf83/export.csv"
     df = pd.DataFrame({
         'the_geom': pd.Series(dtype='string'),
         'objectid_1': pd.Series(dtype='string'),
@@ -78,22 +75,15 @@ def materialize():
         'y_coord': pd.Series(dtype='float'),
         'gisobjid': pd.Series(dtype='int')
     })
-      
-    while True:
-        file = requests.post(url, auth=basic, data={'$limit': limit, '$offset': offset})
-        if file.status_code != 200:
-            print(f"Error fetching data: {file.status_code} - {file.text}")
-            break 
-        batch_df = pd.read_csv(file.content, parse_dates=['reservation_start_date', 'reservation_end_date'])
-        if batch_df.empty:
-            print("No more data to fetch, moving on.")
-            break
-        df = pd.concat([df, batch_df], ignore_index=True)
-        offset += limit
-        if offset >= safety_offset_limit:  # Safety check to prevent infinite loop
-            print("Reached offset limit, stopping fetch.")
-            break
-        print (f"Fetched {len(batch_df)} records, total so far: {len(df)}")
+    names = ['the_geom', 'objectid_1', 'park', 'park_number', 'facility_n', 'facility_t', 'x_coord', 'y_coord', 'gisobjid']  
+    file = requests.post(url, auth=basic)
+    if file.status_code != 200:
+        raise Exception(f"Error fetching data: {file.status_code} - {file.text}")
+    batch_df = pd.read_csv(BytesIO(file.content), names = names, skiprows = [0])
+    if batch_df.empty:
+        print("concern:  datafile empty, moving on.")
+    df = pd.concat([df, batch_df], ignore_index=True)
+    print (f"Fetched {len(batch_df)} records, uploading {len(df)} records")
     # Add extracted_at timestamp for lineage
     df['extracted_at'] = datetime.utcnow().isoformat()
     return df
