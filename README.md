@@ -11,9 +11,10 @@ This workflow aims to build a pipeline from the City of Chicago’s data portal 
 - Explore the Chicago Data Portal
 ## Tools & Approach
 In order to accomplish these goals, I plan to use the following tools:
-- Github codespaces as a replicable virtual environment 
+- Github codespaces as an easy replicable virtual environment 
 - Provision infrastructure as code using Terraform
 - Orchestrate ETL and testing with Bruin
+- Create Python environment in uv for replicable package management 
 - Utilize GCP buckets, BigQuery, and Google Looker for storage, analysis, and reporting
 - The workflow was  built in Github Codespaces, using codespace secrets for a clean environment and replicability
 

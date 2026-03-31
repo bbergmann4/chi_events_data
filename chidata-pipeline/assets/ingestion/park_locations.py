@@ -64,28 +64,27 @@ def materialize():
 
     basic = HTTPBasicAuth(os.getenv('CHI_API_ID'), os.getenv('CHI_API_SECRET'))
     url = "https://data.cityofchicago.org/api/v3/views/eix4-gf83/export.csv"
-    df = pd.DataFrame({
-        'the_geom': pd.Series(dtype='string'),
-        'objectid_1': pd.Series(dtype='string'),
-        'park': pd.Series(dtype='string'),
-        'park_number': pd.Series(dtype='int'),
-        'facility_n': pd.Series(dtype='string'),
-        'facility_t': pd.Series(dtype='string'),
-        'x_coord': pd.Series(dtype='float'),
-        'y_coord': pd.Series(dtype='float'),
-        'gisobjid': pd.Series(dtype='int')
-    })
     names = ['the_geom', 'objectid_1', 'park', 'park_number', 'facility_n', 'facility_t', 'x_coord', 'y_coord', 'gisobjid']  
+    datatypes = {
+        'the_geom': 'string',
+        'objectid_1': 'string',
+        'park': 'string',
+        'park_number': 'int',
+        'facility_n': 'string',
+        'facility_t': 'string',
+        'x_coord': 'float',
+        'y_coord': 'float',
+        'gisobjid': 'int'
+        }
     file = requests.post(url, auth=basic)
     if file.status_code != 200:
         raise Exception(f"Error fetching data: {file.status_code} - {file.text}")
-    batch_df = pd.read_csv(BytesIO(file.content), names = names, skiprows = [0])
-    if batch_df.empty:
-        print("concern:  datafile empty, moving on.")
-    df = pd.concat([df, batch_df], ignore_index=True)
-    print (f"Fetched {len(batch_df)} records, uploading {len(df)} records")
-    # Add extracted_at timestamp for lineage
+    df = pd.read_csv(BytesIO(file.content), names = names, skiprows = [0])
+    if df.empty:
+        raise Exception("Error fetching data:  datafile empty")
     df['extracted_at'] = datetime.utcnow().isoformat()
+    print (f"Fetched {len(df)} records")
+    # Add extracted_at timestamp for lineage
     return df
 
 
