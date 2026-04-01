@@ -55,6 +55,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from requests.auth import HTTPBasicAuth
 from io import BytesIO
+import time
 
 def materialize():
     """
@@ -81,9 +82,22 @@ def materialize():
         'location': 'string'
     }
 
-    file = requests.post(url, auth=basic)
-    if file.status_code != 200:
-        raise Exception(f"Error fetching data: {file.status_code} - {file.text}")
+   
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+          file = requests.post(url, auth=basic, timeout = 10)
+          if file.status_code == 200:
+            break
+          if file.status_code != 200:
+            raise Exception(f"Error fetching data: {file.status_code} - {file.text}")
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed with error: {e}")
+            if attempt < max_retries - 1:
+                print("Retrying...")
+                time.sleep(2 ** attempt)  # Exponential backoff
+            else:
+                raise Exception("Max retries reached. Failed to fetch data.")
     df = pd.read_csv(BytesIO(file.content), names = names, dtype = datatypes, skiprows = [0])
     if df.empty:
         print("concern:  datafile empty, moving on.")

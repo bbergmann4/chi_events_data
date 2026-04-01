@@ -42,13 +42,13 @@ columns:
     type: timestamp
     description: The end date and time of the event
   - name: featured
-    type: boolean
+    type: string
     description: Whether the event is featured
   - name: cancelled
-    type: boolean
+    type: string
     description: Whether the event is cancelled
   - name: recurring
-    type: boolean
+    type: string
     description: Whether the event is recurring
   - name: registration_starts
     type: timestamp
@@ -70,6 +70,8 @@ import requests
 from datetime import datetime, timedelta
 from requests.auth import HTTPBasicAuth
 from io import BytesIO
+import time
+import numpy as np
 
 def materialize():
     """
@@ -93,17 +95,28 @@ def materialize():
                  'location_details': 'string',
                  #'start': 'datetime64[ns]',
                  #'end': 'datetime64[ns]',
-                 'featured': 'bool',
-                 'cancelled': 'bool',
-                 'recurring': 'bool' #,
+                 'featured': 'string',
+                 'cancelled': 'string',
+                 'recurring': 'string' #,
                  #'registration_starts': 'datetime64[ns]',
                  #'registration_ends': 'datetime64[ns]'
                 }
-    file = requests.post(url, auth=basic)
-    if file.status_code != 200:
-        raise Exception(f"Error fetching data: {file.status_code} - {file.text}")
-
-    df = pd.read_csv(BytesIO(file.content),  names = names,  skiprow = [0], dtype=datatypes, parse_dates=['start', 'end', 'registration_starts', 'registration_ends'], true_values=['TRUE', '1'], false_values=['FALSE', '', None, '0'] )
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+          file = requests.post(url, auth=basic, timeout = 10)
+          if file.status_code == 200:
+            break
+          if file.status_code != 200:
+            raise Exception(f"Error fetching data: {file.status_code} - {file.text}")
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed with error: {e}")
+            if attempt < max_retries - 1:
+                print("Retrying...")
+                time.sleep(2 ** attempt)  # Exponential backoff
+            else:
+                raise Exception("Max retries reached. Failed to fetch data.")
+    df = pd.read_csv(BytesIO(file.content),  names = names,  skiprows = [0], dtype=datatypes, parse_dates=['start', 'end', 'registration_starts', 'registration_ends'] )
 
     if df.empty:
         raise Exception("Error fetching data:  datafile empty")
